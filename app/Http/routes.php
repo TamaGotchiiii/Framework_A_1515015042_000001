@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('SelamatDatang');
 });
+
+Route::get('/public', function(){
+	return view('nama');
+});
