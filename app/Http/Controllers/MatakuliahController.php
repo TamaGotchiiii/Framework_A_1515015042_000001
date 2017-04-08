@@ -47,4 +47,5 @@ class MatakuliahController extends Controller
         $informasi=$matakuliah->delete() ? 'Berhasil hapus data' : 'Gagal hapus data';
         return view('matakuliah')->with(['informasi'=>$informasi]);
     }
+
 }

@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Jadwal extends Model
 {
     protected $table='jadwal_matakuliah';
-    protected $fillable=['mahasiswa_id','ruangan_id','dosen_matakuliah_id'];
+    protected $fillable=['mahasiswa_id','ruangan_id'];
 
     public function Dosen_Matakuliah(){
-    	return $this->belongsTo(Dosen_Matakuliah::class);
+    	return $this->belongsTo(Dosen_Matakuliah::class, 'dosen_matakuliah_id');
     }
 
     public function Mahasiswa(){

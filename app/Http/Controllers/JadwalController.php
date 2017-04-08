@@ -7,23 +7,67 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 
 use App\Jadwal;
+use App\Mahasiswa;
+use App\Dosen_Matakuliah;
+use App\Ruangan;
 
 class JadwalController extends Controller
 {
+    protected $informasi = 'Gagal Melakukan Aksi';
+    protected $guarded = ['id'];
     public function awal(){
-    	return "Hello dari JadwalController";
+    	$semuaJadwalMatakuliah = Jadwal::all();
+        return view('Jadwal.awal', compact('semuaJadwalMatakuliah'));
     }
 
     public function tambah(){
-    	return $this->simpan();
+    	$mahasiswa = new Mahasiswa();
+        $ruangan = new Ruangan();
+        $dosenMatakuliah = new Dosen_Matakuliah();
+        return view('Jadwal.tambah', compact('mahasiswa', 'ruangan', 'dosenMatakuliah'));
     }
 
-    public function simpan(){
-    	$jadwal=new Jadwal();
-    	$jadwal->mahasiswa_id=1;
-    	$jadwal->ruangan_id=1;
-    	$jadwal->dosen_matakuliah_id=1;
-    	$jadwal->save();
-    	return "Data jadwal telah disimpan";
+    public function simpan(Request $input){
+        $jadwalMatakuliah = new Jadwal();
+        $jadwalMatakuliah->mahasiswa_id=$input->mahasiswa_id;
+        $jadwalMatakuliah->ruangan_id=$input->ruangan_id;
+        $jadwalMatakuliah->dosen_matakuliah_id=$input->dosen_matakuliah_id;
+
+        if($jadwalMatakuliah->save()) $this->informasi = "Jadwal Mahasiswa berhasil diperbarui";
+        return redirect('jadwal')->with(['informasi'=>$this->informasi]);
+    }
+
+    public function edit($id){
+        $jadwalMatakuliah = Jadwal::find($id);
+        $mahasiswa = new Mahasiswa();
+        $ruangan = new Ruangan();
+        $dosenMatakuliah = new Dosen_Matakuliah();
+        return view('Jadwal.edit', compact('mahasiswa','ruangan','dosenMatakuliah','jadwalMatakuliah'));
+    }
+
+    public function lihat($id){
+        $jadwalMatakuliah = Jadwal::find($id);
+        return view('Jadwal.lihat', compact('jadwalMatakuliah'));
+    }
+
+    public function update($id, Request $input){
+        $jadwalMatakuliah = Jadwal::find($id);
+        $jadwalMatakuliah->fill($input->only('ruangan_id','dosen_matakuliah_id','mahasiswa_id'));
+        if($jadwalMatakuliah->save()) $this->informasi = "Jadwal Mahasiswa berhasil diperbarui";
+        return redirect('jadwal')->with(['informasi'=>$this->informasi]);
+    }
+
+    public function hapus($id){
+        $jadwalMatakuliah = Jadwal::find($id);
+        if($jadwalMatakuliah->delete())$this->informasi = "Jadwal Mahasiswa berhasil dihapus";
+        return redirect('jadwal')->with(['informasi'=>$this->informasi]);
+    }
+
+    public function Mahasiswa(){
+        return $this->belongsTo(Mahasiswa::class);
+    }
+
+    public function Dosen_matakuliah(){
+        return $this->belongsTo(Dosen_Matakuliah::class);
     }
 }

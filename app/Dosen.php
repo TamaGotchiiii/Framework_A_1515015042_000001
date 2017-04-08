@@ -14,4 +14,16 @@ class Dosen extends Model
     public function dosen_matakuliah(){
     	return $this->hasMany(Dosen_Matakuliah::class);
     }
+
+    public function getUsernameAttribute(){
+    	return $this->pengguna->username;
+    }
+
+    public function listMahasiswaDanNim(){
+    	$out = [];
+    	foreach($this->all() as $mhs){
+    		$out[$dsn->id] = "{$dsn->nama} ({$dsn->nip})";
+    	}
+    	return $out;
+    }
 }
