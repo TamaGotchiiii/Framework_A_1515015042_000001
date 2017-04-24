@@ -15,13 +15,6 @@ Route::get('/', function () {
 });
 Route::auth();
 Route::get('/home', 'HomeController@index');
-Route::get('pengguna','PenggunaController@awal');
-Route::get('pengguna/tambah','PenggunaController@tambah');
-Route::post('pengguna/simpan','PenggunaController@simpan');
-Route::get('pengguna/edit/{pengguna}','PenggunaController@edit');
-Route::post('pengguna/edit/{pengguna}','PenggunaController@update');
-Route::get('pengguna/lihat/{pengguna}','PenggunaController@lihat');
-Route::get('pengguna/hapus/{pengguna}','PenggunaController@hapus');
 Route::get('ruangan','ruangancontroller@awal');
 Route::get('ruangan/tambah','ruangancontroller@tambah');
 Route::post('ruangan/simpan','ruangancontroller@simpan');
@@ -74,3 +67,50 @@ Route::post('dosen_matakuliah/simpan', 'Dosen_MatakuliahController@simpan');
 Route::get('dosen_matakuliah/edit/{dosen_matakuliah}','Dosen_MatakuliahController@edit');
 Route::post('dosen_matakuliah/edit/{dosen_matakuliah}', 'Dosen_MatakuliahController@update');
 Route::get('dosen_matakuliah/hapus/{dosen_matakuliah}', 'Dosen_MatakuliahController@hapus');
+
+Route::get('ujiHas','RelationshipRebornController@ujiHas');
+Route::get('ujiDoesntHave', 'RelationshipRebornController@ujiDoesntHave');
+Route::get('/', function(){
+	return \App\Dosen_Matakuliah::whereHas('dosen',function($query){
+		$query->where('nama','like','%s%');
+	})
+	->orWhereHas('matakuliah', function($kueri){
+		$kueri->where('title','like','%a%');
+	})
+	->with('dosen', 'matakuliah')
+	->groupBy('dosen_id')
+	->get();
+});
+
+Route::get('/', function(Illuminate\Http\Request $request){
+	echo "Ini adalah request dari method get ".$request->nama;
+});
+
+use Illuminate\Http\Request;
+
+Route::get('/', function(){
+	echo Form::open(['url'=>'/']).
+		Form::label('nama').
+		Form::text('nama',null).
+		Form::submit('kirim').
+		Form::close();
+});
+
+Route::post('/', function(Request $request){
+	echo "Hasil dari form input tadi nama : ".$request->nama;
+});
+
+Route::get('/login','sesicontroller@form');
+Route::post('/login','sesicontroller@validasi');
+Route::get('/logout','sesicontroller@logout');
+Route::get('/','sesicontroller@index');
+
+Route::group(['middleware'=>'AuthentifikasiUser'],function(){
+	Route::get('pengguna','PenggunaController@awal');
+	Route::get('pengguna/tambah','PenggunaController@tambah');
+	Route::post('pengguna/simpan','PenggunaController@simpan');
+	Route::get('pengguna/edit/{pengguna}','PenggunaController@edit');
+	Route::post('pengguna/edit/{pengguna}','PenggunaController@update');
+	Route::get('pengguna/lihat/{pengguna}','PenggunaController@lihat');
+	Route::get('pengguna/hapus/{pengguna}','PenggunaController@hapus');
+});

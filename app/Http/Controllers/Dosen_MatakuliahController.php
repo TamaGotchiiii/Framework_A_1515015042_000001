@@ -9,6 +9,7 @@ use App\Http\Requests;
 use App\Dosen_Matakuliah;
 use App\Dosen;
 use App\Matakuliah;
+use App\Http\Requests\DosenMatakuliahRequest;
 
 class Dosen_MatakuliahController extends Controller
 {
@@ -25,7 +26,7 @@ class Dosen_MatakuliahController extends Controller
         return view('dosenMatakuliah.tambah', compact('matakuliah', 'dosen'));
     }
 
-    public function simpan(Request $input){
+    public function simpan(DosenMatakuliahRequest $input){
         $dosenMatakuliah = new Dosen_Matakuliah();
         $dosenMatakuliah->matakuliah_id=$input->matakuliah_id;
         $dosenMatakuliah->dosen_id=$input->dosen_id;
@@ -46,7 +47,7 @@ class Dosen_MatakuliahController extends Controller
         return view('dosenMatakuliah.lihat', compact('dosenMatakuliah'));
     }
 
-    public function update($id, Request $input){
+    public function update($id, dosenMatakuliahRequest $input){
         $dosenMatakuliah = Dosen_Matakuliah::find($id);
         $dosenMatakuliah->fill($input->only('matakuliah_id', 'dosen_id'));
         if($dosenMatakuliah->save()) $this->informasi = "Dosen Matakuliah berhasil diperbarui";
